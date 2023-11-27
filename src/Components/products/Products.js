@@ -1,16 +1,18 @@
 import React, {useEffect, useState } from 'react'
 import ListItem from '../listItems/ListItem'
 import Loader from '../UI/Loader'
-export default function Products({addOn,removeOn}) {
+export default function Products({addOn,removeOn,queue}) {
   const [items,setItems]= useState([])
   const [loader,setLoader]= useState(true)
-  const [cartItems,setCartItems]=useState([])
+  // const [cartItems,setCartItems]=useState([])
     useEffect(()=>{
       fetch("https://react-database2023-default-rtdb.firebaseio.com/items.json")
       .then(response=>response.json())
       .then(data=> {
         const transformedData=data.map((item,index)=>{
-         return {...item,id:index}
+         return {...item,
+          quantity:0,
+          id:index}
       })
       setLoader(false)
       setItems(transformedData)
@@ -20,24 +22,43 @@ export default function Products({addOn,removeOn}) {
         setLoader(false)
         console.log(err)})
     },[])
+    useEffect(()=>{
+      if(queue.id>-1){
+      if(queue.type===1){
+         handleAdd(queue.id)
+      }
+      else if(queue.type===-1){
+        handelRemove(queue.id)
+      }
+    }
+  }
+    ,[queue])
     let handleAdd=(id)=>{
         // console.log(id)
-        setCartItems([...cartItems,id])
+        // setCartItems([...cartItems,id])
         // if(!cartItems.includes(id)){
         //   let items=[...cartItems,id]
         //   setCartItems(items)
         // }
-        addOn()
+        let data=[...items]
+        let index= data.findIndex(i=>i.id===id)
+        data[index].quantity +=1
+        setItems(data)
+        addOn(data[index])
     }
     let handelRemove=id=>{
       // console.log(id)
-        let index= cartItems.indexOf(id)
-        let items=[...cartItems]
-        items.splice(index,1)
-        setCartItems(items)
-      removeOn()
+        // let index= cartItems.indexOf(id)
+        // let items=[...cartItems]
+        // items.splice(index,1)
+        let data=[...items]
+        let index= data.findIndex(i=>i.id===id)
+        data[index].quantity -=1
+        setItems(data)
+        // setCartItems(items)
+        removeOn(data[index])
     }
-    useEffect(()=>{console.log(`${cartItems}`)},[cartItems])
+    // useEffect(()=>{console.log(`${cartItems}`)},[cartItems])
   return (
     <>
     <div className='product-list'>

@@ -1,6 +1,6 @@
 import React from 'react'
 import Cart from '../cart'
-export default function Header({items}) {
+export default function Header({itemsLength,items,handleQueue}) {
   return (
     <header>
     <div className="nav-brand">
@@ -39,7 +39,7 @@ export default function Header({items}) {
             <line x1="21" y1="21" x2="15" y2="15" />
         </svg>
     </div>
-    <Cart items={items}/>
+    <Cart items={itemsLength} data={items} handleQueue={(id,type)=>handleQueue(id,type)}/>
 </header >
   )
 }

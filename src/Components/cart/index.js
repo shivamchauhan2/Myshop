@@ -1,10 +1,17 @@
 import React, { useState } from 'react'
 import Modal from '../UI/Modal'
+import CartItem from './CartItem'
+import SuccessModal from '../UI/SuccessModal'
 
-export default function Cart({items}) {
+export default function Cart({items,data,handleQueue}) {
     const [showModal,setShowModal]= useState(false)
+    const [orderModal,setOrderModal]= useState(false)
     let handleModal=()=>{
         setShowModal(previousState=> !previousState)
+    }
+    let handleOrder=()=>{
+        setShowModal(false)
+        setOrderModal(previousState=> !previousState)
     }
   return (
     <>
@@ -22,32 +29,15 @@ export default function Cart({items}) {
         </button>
     </div>
     {showModal && <Modal onClose={handleModal}>
-    <div className="checkout-modal">
+      <div className="checkout-modal">
                         <h2>Checkout Modal</h2>
                         <div className="checkout-modal_list">
                             {
                                 items > 0 ?
-                                <div className="checkout-modal_list-item">
-                                    <div className="img-wrap">
-                                        <img src={"/assets/placeholder.png"} className="img-fluiid" alt="Placeholder"/>
-                                    </div>
-                                    <div className="information">
-                                        <div>
-                                            <h4>Title of the Product</h4>
-                                            <div className="pricing">
-                                                <span>2000</span>
-                                                <small>
-                                                    <strike>2500</strike>
-                                                </small>
-                                            </div>
-                                        </div>
-                                        <div className="cart-addon cart-addon__modal">
-                                            <button>-</button>
-                                            <span className="counter">{0}</span>
-                                            <button>+</button>
-                                        </div>
-                                    </div>
-                                </div> :
+                                data.map((item)=>{
+                                    return ( <CartItem item={item} key={item.id} emitIncrease={(id)=>handleQueue(id,1)} emitDecrease={(id)=>handleQueue(id,-1)}/>)
+                                })
+                                :
                                 <div className="empty-cart">Please add something in your cart!</div>
                             }
                         </div>
@@ -56,13 +46,14 @@ export default function Cart({items}) {
                             <div className="checkout-modal_footer">
                                 <div className="totalAmount">
                                     <h4>Total Amount: </h4>
-                                    <h4>2000 INR</h4>
+                                    <h4>{data.reduce((acc,cur)=>acc+cur.discountedPrice*cur.quantity,0)}INR</h4>
                                 </div>
-                                <button>Order Now</button>
+                                <button onClick={handleOrder}>Order Now</button>
                             </div>
                         }
                     </div>
         </Modal>}
+    {orderModal && <SuccessModal onClose={handleOrder} ></SuccessModal>}
     </>
   )
 }
