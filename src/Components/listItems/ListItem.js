@@ -1,26 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState} from 'react'
 import AddCardIcon from '../../assets/add_cart.svg'
+import { useDispatch, useSelector } from "react-redux"
 import Modal from '../UI/Modal'
+import { addItemHandler, removeItemHandler } from '../../actions'
 export default function ListItem({data,addItem,removeItem}) {
-  // const [counter,setCounter]= useState(0)
+
   const [showModal,setShowModal]= useState(false)
+  const item = useSelector(state => state.items.find(item => item.id === data.id))
+  const dispatch = useDispatch()
   let decreaseCounterByOne=(event)=>{
     event.stopPropagation()
-    // if(counter<=0){
-      // return
-    // }
-    // if(counter===1){
-      removeItem(data.id)
-    // }
-    // setCounter(counter-1)
-    
+      dispatch(removeItemHandler(data.id))
+    //   dispatch({
+    //     type: "REMOVE_ITEM",
+    //     payload: {
+    //         id: data.id
+    //     }
+    // })
   }
   let increaseCounterByOne=(event)=>{
     event.stopPropagation()
-    // if(data.quantity===0){
-      addItem(data.id) 
-    // }
-    // setCounter(counter+1)
+    dispatch(addItemHandler(data))
   }
   let handleModal=()=>{
       setShowModal(previousState=> !previousState)
@@ -38,15 +38,15 @@ export default function ListItem({data,addItem,removeItem}) {
       <div className={"title"}>
         <h3>{data.title}</h3>
       </div>
-      {data.quantity<1 ?<button onClick={increaseCounterByOne} className="cart-add" >
+      {!item ||item?.quantity<1 ?<button onClick={increaseCounterByOne} className="cart-add" >
         <span >Add to Cart</span>
-        <img src={AddCardIcon} />
+        <img src={AddCardIcon} alt='Carticon' />
       </button>:
      <div className={"cart-addon"}>
                 <button onClick={decreaseCounterByOne}><span>-</span></button>
-                <span className={"counter"}>{data.quantity}</span>
+                <span className={"counter"}>{item.quantity}</span>
                 <button onClick={increaseCounterByOne}><span>+</span></button>
-        </div>
+      </div>
 }
     </div>
     {showModal && <Modal onClose={handleModal}> <div className="item-card__modal">
@@ -63,7 +63,7 @@ export default function ListItem({data,addItem,removeItem}) {
                             </div>
                             <p>{data.description}</p>
                             {
-                                data.quantity < 1 ?
+                                !item || item?.quantity< 1 ?
                                 <button className={"cart-add card-add__modal"} onClick={increaseCounterByOne}>
                                     <span>Add to Cart</span>
                                     <img src={AddCardIcon} alt="Cart Icon"/>
@@ -71,7 +71,7 @@ export default function ListItem({data,addItem,removeItem}) {
                                 :
                                 <div className="cart-addon card-addon__modal">
                                     <button onClick={decreaseCounterByOne}><span>-</span></button>
-                                    <span>{data.quantity}</span>
+                                    <span>{item.quantity}</span>
                                     <button onClick={increaseCounterByOne}><span>+</span></button>
                                 </div>
                             }

@@ -17,9 +17,9 @@ export default function CartItem({item,emitIncrease,emitDecrease}) {
                                         </div>
                                     </div>
                                     <div className="cart-addon cart-addon__modal">
-                                        <button onClick={()=>emitDecrease(item.id)}>-</button>
+                                        <button onClick={()=>emitDecrease(item)}>-</button>
                                         <span className="counter">{`${item.quantity}`}</span>
-                                        <button onClick={()=>emitIncrease(item.id)}>+</button>
+                                        <button onClick={()=>emitIncrease(item)}>+</button>
                                     </div>
                                 </div>
   </div>
