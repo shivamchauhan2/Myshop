@@ -22,7 +22,7 @@ export default function Products() {
       }catch(error){
         console.log(console.log(error))
       }
-      fetch(`https://react-database2023-default-rtdb.firebaseio.com/${slug}`)
+      fetch(`https://database-af485-default-rtdb.firebaseio.com/${slug}`)
       .then(response=>response.json())
       .then(data=> {
         const transformedData=data.map((item,index)=>{
